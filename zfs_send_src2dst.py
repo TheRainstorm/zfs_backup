@@ -32,7 +32,7 @@ def get_snap_list(dataset, host=None):
 
 def ssh_cmd(cmd, ssh_host=''):
     if ssh_host:
-        cmd = f"ssh {host} '{cmd}'"
+        cmd = f"ssh {ssh_host} '{cmd}'"
     return cmd
 
 def print_expired(dataset, delete=False, ssh_host=''):
@@ -72,7 +72,7 @@ def process_one_dst(SRC, DST, progress=True, dry_run=False, no_compress=False, s
     if dst_snaps and dst_date_list[-1] >= src_date_list[-1]:
         print(f"Destination is newer than source, exit")
         print('delete dst expired snapshot')
-        print_expired(DST, delete = not dry_run, ssh_host)
+        print_expired(DST, delete = not dry_run, ssh_host = ssh_host)
         return
 
     SRC_LATEST = src_snaps[-1]  # snapshot to send
@@ -89,7 +89,7 @@ def process_one_dst(SRC, DST, progress=True, dry_run=False, no_compress=False, s
         run_cmd3(f"zfs send -{c}LR '{SRC_LATEST}' |{pv_str} {zfs_recv}", print_cmd=True, run=not dry_run)
 
     print('delete dst expired snapshot')
-    print_expired(DST, delete = not dry_run, ssh_host)
+    print_expired(DST, delete = not dry_run, ssh_host = ssh_host)
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Send zfs snapshot from src to dst, keep specified number of snapshots.')
