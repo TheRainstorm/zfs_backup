@@ -50,7 +50,7 @@ def print_expired(dataset, delete=False, ssh_host=''):
         UNTIL = int(zCREATION) + int(zRETENTION)
         UNTIL_DATE = datetime.datetime.fromtimestamp(UNTIL).strftime("%Y-%m-%d %H:%M:%S")
         expired = int(datetime.datetime.now().timestamp()) >= UNTIL
-        print(f"{zNAME}: {UNTIL_DATE} {'E'if expired else ' '} {'D' if default_flag else ' '}")
+        print(f"{zNAME}: {UNTIL_DATE} {'Expired ' if expired else '    '} {'(default) ' if default_flag else '    '}")
         if delete and expired:
             print(f"Delete {zNAME}")
             run_cmd(ssh_cmd(f"zfs destroy -rv '{zNAME}'", ssh_host))
