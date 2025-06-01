@@ -79,14 +79,14 @@ def process_one_dst(SRC, DST, progress=True, dry_run=False, no_compress=False, s
 
     pv_str = " pv |" if progress else ""
     c = '' if no_compress else 'c'
-    zfs_recv = ssh_cmd(f'zfs recv -F -x mountpoint \'{DST}\'', ssh_host)
+    zfs_recv = ssh_cmd(f'zfs recv -s -F -x mountpoint \'{DST}\'', ssh_host)
     if common_date_list:
         print(f"Increment send")
         SRCLAST=f"{SRC}@{common_date_list[-1]}"
-        run_cmd3(f"zfs send -{c}LRI '{SRCLAST}' '{SRC_LATEST}' |{pv_str} {zfs_recv}", print_cmd=True, run=not dry_run)
+        run_cmd3(f"zfs send -w -{c}LRI '{SRCLAST}' '{SRC_LATEST}' |{pv_str} {zfs_recv}", print_cmd=True, run=not dry_run)
     else:
         print(f"Clean send")
-        run_cmd3(f"zfs send -{c}LR '{SRC_LATEST}' |{pv_str} {zfs_recv}", print_cmd=True, run=not dry_run)
+        run_cmd3(f"zfs send -w -{c}LR '{SRC_LATEST}' |{pv_str} {zfs_recv}", print_cmd=True, run=not dry_run)
 
     print('delete dst expired snapshot')
     print_expired(DST, delete = not dry_run, ssh_host = ssh_host)
