@@ -92,10 +92,10 @@ if __name__ == "__main__":
     
     parser.add_argument('-P', '--progress', action='store_true', default=True, help='Show zfs send progress bar')
     parser.add_argument('-n', '--dry-run', action='store_true', help='Don\'t make any changes, just print commands')
-    parser.add_argument('-S', '--snapshot', action='store_true', default=True, help='snapshot src before zfs send')
+    parser.add_argument('-N', '--no-snapshot', dest='snapshot', action='store_false', help='don\'t snapshot src before zfs send')
     parser.add_argument('-r', '--retention-days', type=int, default=7, help='snapshot src retention days, default 7 days')
     args = parser.parse_args()
-
+    
     if args.snapshot:
         RETENTION = args.retention_days * 86400 - 3600
         DATE = datetime.datetime.now().strftime('%Y%m%d')
@@ -107,10 +107,11 @@ if __name__ == "__main__":
         else:
             run_cmd(f"zfs snapshot -ro ibug:retention={RETENTION} '{args.src}@{DATE}'", run=not args.dry_run)
     
-    print('delete src expired snapshot')
-    print_expired(args.src, delete = not args.dry_run)
     for dst in args.dst_list:
         print(f"\n{args.src} ---> {dst}")
         start_time = datetime.datetime.now()
         process_one_dst(args.src, dst, progress=args.progress, dry_run=args.dry_run, ssh_host=args.ssh_host)
         print(f"elapsed time: {datetime.datetime.now() - start_time}")
+    
+    print('delete src expired snapshot')
+    print_expired(args.src, delete = not args.dry_run)
