@@ -21,7 +21,11 @@ Crontab 配置示例：
 7  3    * * 0,1,2,3,4,6 RETENTION_DAYS=7  /root/scripts/zfs_backup/zfs_snapshot.sh rpool/ROOT/pve-1
 ```
 
-每周一和周五 4 点执行备份，将本地 pve 的根文件系统 `rpool/ROOT/pve-1` 备份到远程机器 nas-pve 的 Saturn 存储池 `Saturn/backup/ryzen-pve/pve-1`。
+每周一和周五 4 点执行备份，将 `rpool` 存储池中的 `rpool/vault/vm-100-disk-docker` 备份到 `Saturn` 存储池对应位置
+```shell
+20 4    * * 1,5 /root/scripts/zfs_backup/zfs_send.py -s rpool/vault/vm-100-disk-docker -d Saturn/backup/nas-pve/vm-100-disk-docker
+```
+将本地 pve 的根文件系统 `rpool/ROOT/pve-1` 备份到远程机器 nas-pve 的 Saturn 存储池 `Saturn/backup/ryzen-pve/pve-1`。
 ```shell
 15 4    * * 1,5 /root/scripts/zfs_backup/zfs_send.py -s rpool/ROOT/pve-1 -d Saturn/backup/ryzen-pve/pve-1 -H nas-pve
 ```
